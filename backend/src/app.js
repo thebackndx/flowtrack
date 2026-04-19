@@ -7,6 +7,7 @@ const authMiddleware = require("./middlewares/auth.middleware")
 const authRoutes = require("./routes/auth.route")
 const testRoutes = require("./routes/test.route")
 const transactionRoutes = require("./routes/transcation.route")
+const categoryRoutes = require("./routes/category.route")
 
 app.use(express.json())
 app.use(cookieParser())
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes)
 app.use("/api/test", testRoutes)
+app.use("/api/category", categoryRoutes)
 app.use("/api/transaction", transactionRoutes)
 
 

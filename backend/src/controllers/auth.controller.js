@@ -1,7 +1,7 @@
 const userModel = require("../models/user.model")
 const bcrypt = require("bcryptjs")
 const generateToken = require("../utils/generateToken")
-const { mongo, default: mongoose } = require("mongoose")
+// const { mongo, default: mongoose } = require("mongoose")
 
 const registerUser = async (req, res) => {
     try {
