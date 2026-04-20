@@ -6,13 +6,19 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const [error, setError] = useState("");
 
     const handleLogin = async () => {
         try {
+            setError("");
             await API.post("/auth/login", { email, password });
             navigate("/dashboard");
         } catch (err) {
-            console.log(err.response?.data || err.message);
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(err.response.data.message);
+            } else {
+                setError("Server not responding");
+            }
         }
     };
 
@@ -27,7 +33,10 @@ export default function Login() {
                     className="border rounded-md px-3 py-2 w-full"
                     placeholder="Email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError("");
+                    }}
                 />
 
                 <input
@@ -35,7 +44,10 @@ export default function Login() {
                     className="border rounded-md px-3 py-2 w-full"
                     placeholder="Password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError("");
+                    }}
                 />
 
                 <button
@@ -44,6 +56,11 @@ export default function Login() {
                 >
                     Login
                 </button>
+                {error && (
+                    <p className="text-red-500 text-sm text-center">
+                        {error}
+                    </p>
+                )}
                 <p className="text-sm text-center">
                     Don’t have an account?{" "}
                     <span

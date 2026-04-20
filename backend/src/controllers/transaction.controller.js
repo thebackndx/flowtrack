@@ -6,10 +6,41 @@ const addTransaction = async (req, res) => {
     try {
         const { type, amount, title, note, category } = req.body
 
-        if (!type || !amount || !category || !title) {
+        // 1. Title
+        if (!title || title.trim() === "") {
             return res.status(400).json({
-                message: "All fields are required."
-            })
+                message: "Title is required"
+            });
+        }
+
+        // 2. Amount empty check
+        if (amount === undefined || amount === null || amount === "") {
+            return res.status(400).json({
+                message: "Amount is required"
+            });
+        }
+
+        // 3. Amount type check
+        const parsedAmount = Number(amount);
+
+        if (isNaN(parsedAmount)) {
+            return res.status(400).json({
+                message: "Amount must be a number"
+            });
+        }
+
+        // 4. Type check
+        if (!type) {
+            return res.status(400).json({
+                message: "Type is required"
+            });
+        }
+
+        // 5. Category check
+        if (!category) {
+            return res.status(400).json({
+                message: "Please select a category"
+            });
         }
 
         const categoryDoc = await categoryModel.findOne({
