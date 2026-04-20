@@ -11,4 +11,6 @@ router.delete("/:id", authMiddleware, transactionController.deleteTransaction)
 
 router.patch("/:id", authMiddleware, transactionController.updateTransaction)
 
+router.get("/summary", authMiddleware, transactionController.getSummary)
+
 module.exports = router

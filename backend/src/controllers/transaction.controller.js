@@ -165,4 +165,81 @@ const updateTransaction = async (req, res) => {
     }
 }
 
-module.exports = { addTransaction, getTransaction, deleteTransaction, updateTransaction }
+const getSummary = async (req, res) => {
+    try {
+        const userId = req.user.id
+
+        const sortBy = req.query.sortBy || "date"
+        const order = req.query.order === "asc" ? 1 : -1
+
+        const filter = { user: userId }
+
+        if (req.query.range === "24h") {
+            const last24h = new Date()
+            last24h.setHours(last24h.getHours() - 24)
+            filter.date = { $gte: last24h }
+        }
+
+        if (req.query.range === "7d") {
+            const last7d = new Date()
+            last7d.setDate(last7d.getDate() - 7)
+            filter.date = { $gte: last7d }
+        }
+
+        if (req.query.range === "30d") {
+            const last30d = new Date()
+            last30d.setDate(last30d.getDate() - 30)
+            filter.date = { $gte: last30d }
+        }
+
+        const transactions = await transactionModel
+            .find(filter)
+            .sort({ [sortBy]: order })
+
+        const matchStage = {
+            user: new mongoose.Types.ObjectId(req.user.id)
+        }
+
+        if (filter.date) {
+            matchStage.date = filter.date
+        }
+
+        const result = await transactionModel.aggregate([
+            { $match: matchStage },
+            {
+                $group: {
+                    _id: "$type",
+                    total: { $sum: "$amount" }
+                }
+            }
+        ])
+
+        let totalIncome = 0
+        let totalExpense = 0
+
+        result.forEach(item => {
+            if (item._id === "income") totalIncome = item.total
+            if (item._id === "expense") totalExpense = item.total
+        })
+
+        const balance = totalIncome - totalExpense
+
+        res.status(200).json({
+            summary: {
+                totalIncome,
+                totalExpense,
+                balance
+            },
+            transactions
+        })
+
+    } catch (e) {
+        console.log(e)
+        res.status(500).json({
+            message: "Failed to fetch summary"
+        })
+    }
+}
+
+
+module.exports = { addTransaction, getTransaction, deleteTransaction, updateTransaction, getSummary }
