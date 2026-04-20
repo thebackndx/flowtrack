@@ -11,7 +11,7 @@ const transactionRoutes = require("./routes/transaction.route")
 const categoryRoutes = require("./routes/category.route")
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     credentials: true
 }));
 app.use(express.json())
@@ -19,8 +19,8 @@ app.use(cookieParser())
 
 
 app.get("/", (req, res) => {
-    res.send("Server is runing")
-})
+  res.send("Server is runing");
+});
 
 app.use("/api/auth", authRoutes)
 app.use("/api/test", testRoutes)

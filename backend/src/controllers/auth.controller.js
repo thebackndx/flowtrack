@@ -39,8 +39,8 @@ const registerUser = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax"
+            secure: true,
+            sameSite: "none"
         })
 
         res.status(201).json({
@@ -62,44 +62,44 @@ const loginUser = async (req, res) => {
 
         if (!email || !password) {
             return res.status(400).json({
-                message : "All fields are required"
+                message: "All fields are required"
             })
         }
 
-        const user = await userModel.findOne({email})
+        const user = await userModel.findOne({ email })
 
-        if(!user) {
+        if (!user) {
             return res.status(400).json({
-                message : "Invalid credentials"
+                message: "Invalid credentials"
             })
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
 
-        if(!isMatch) {
+        if (!isMatch) {
             return res.status(400).json({
-                message : "Invalid credentials"
+                message: "Invalid credentials"
             })
         }
 
         const token = generateToken(user._id)
 
         res.cookie("token", token, {
-            httpOnly : true,
-            secure: false,
-            sameSite : "lax"
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
         })
 
         res.status(200).json({
-            message : "Login successfull.",
-            user : user,
+            message: "Login successfull.",
+            user: user,
             token
         })
 
     }
-    catch(e){
+    catch (e) {
         res.status(500).json({
-            message : e
+            message: e
         })
     }
 
@@ -107,8 +107,8 @@ const loginUser = async (req, res) => {
 }
 
 const logoutUser = (req, res) => {
-  res.clearCookie("token");
-  res.json({ message: "Logged out" });
+    res.clearCookie("token");
+    res.json({ message: "Logged out" });
 };
 
 module.exports = {
