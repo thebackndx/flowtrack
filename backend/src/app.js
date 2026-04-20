@@ -11,7 +11,7 @@ const transactionRoutes = require("./routes/transaction.route")
 const categoryRoutes = require("./routes/category.route")
 
 app.use(cors({
-    origin: "https://flowtrack-beige.vercel.app/",
+    origin: "https://flowtrack-beige.vercel.app",
     credentials: true
 }));
 app.use(express.json())
