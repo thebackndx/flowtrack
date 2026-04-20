@@ -34,7 +34,7 @@ const getCategory = async (req, res) => {
     try {
         const categories = await categoryModel.find({
             user: req.user.id
-        })
+        }).sort({ createdAt: -1 });
 
         res.status(200).json({
             message: "Fetch succesull",
