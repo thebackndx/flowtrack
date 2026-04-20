@@ -194,6 +194,7 @@ const getSummary = async (req, res) => {
 
         const transactions = await transactionModel
             .find(filter)
+            .populate("category")
             .sort({ [sortBy]: order })
 
         const matchStage = {
