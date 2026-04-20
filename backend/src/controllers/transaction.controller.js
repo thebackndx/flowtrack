@@ -1,3 +1,4 @@
+const mongoose = require("mongoose")
 const transactionModel = require("../models/transaction.model")
 
 const addTransaction = async (req, res) => {
@@ -28,7 +29,7 @@ const addTransaction = async (req, res) => {
     }
 }
 
-const getTransaction = async(req, res) => {
+const getTransaction = async (req, res) => {
     try {
         const transactions = await transactionModel.find({
             user: req.user.id,
@@ -46,4 +47,39 @@ const getTransaction = async(req, res) => {
     }
 }
 
-module.exports = { addTransaction, getTransaction }
+const deleteTransaction = async (req, res) => {
+    try {
+        const transcationID = req.params.id
+
+        if(!mongoose.Types.ObjectId.isValid(transcationID)){
+            return res.status(400).json({
+                message : "Invalid transaction id"
+            })
+        }
+
+        const deleted = await transactionModel.findOneAndDelete({
+            _id : transcationID,
+            user : req.user.id
+        })
+
+        if(!deleted){
+            return res.status(404).json({
+                message : "Transaction not found"
+            })
+        }
+
+        res.status(200).json({
+            message : "Transaction deleted successfully",
+            transaction : deleted
+        })
+
+    }
+    catch (e) {
+        res.status(500).json({
+            note: "Deletion failed",
+            message : e
+        })
+    }
+}
+
+module.exports = { addTransaction, getTransaction, deleteTransaction }

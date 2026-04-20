@@ -7,4 +7,6 @@ router.post("/", authMiddleware, transactionController.addTransaction)
 
 router.get("/", authMiddleware, transactionController.getTransaction)
 
+router.delete("/:id", authMiddleware, transactionController.deleteTransaction)
+
 module.exports = router
